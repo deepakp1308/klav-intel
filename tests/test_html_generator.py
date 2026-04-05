@@ -9,7 +9,7 @@ def test_generate_html_contains_template_elements(sample_brief_markdown):
     assert "April 4, 2026" in html
     assert "Confidential" in html
     assert "<table" in html
-    assert "Helvetica" in html
+    assert "Arial" in html
 
 
 def test_generate_html_renders_markdown_tables(sample_brief_markdown):
