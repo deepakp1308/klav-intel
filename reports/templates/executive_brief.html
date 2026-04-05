@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KLAV-INTEL | {{ report_date }}</title>
+<style>
+  @page {
+    size: US Letter;
+    margin: 0.6in 0.7in;
+    @top-center {
+      content: "KLAV-INTEL | Klaviyo Weekly Competitive Brief | Mailchimp R&A";
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 7pt;
+      color: #6b7c93;
+    }
+    @bottom-left {
+      content: "Confidential — Mailchimp/Intuit";
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 7pt;
+      color: #6b7c93;
+    }
+    @bottom-right {
+      content: "Page " counter(page);
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 7pt;
+      color: #6b7c93;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Helvetica, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1.45;
+    color: #1a1f36;
+    background: #ffffff;
+    padding: 0;
+  }
+
+  .header {
+    text-align: center;
+    border-bottom: 2px solid #162251;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #162251;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+  .header .subtitle {
+    font-size: 8pt;
+    color: #6b7c93;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #e8edf5;
+    margin: 10px 0;
+  }
+
+  h2 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #162251;
+    margin: 12px 0 6px 0;
+    padding-bottom: 3px;
+    border-bottom: 1.5px solid #00b9a9;
+  }
+
+  h3 {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #1e3a6e;
+    margin: 8px 0 4px 0;
+  }
+
+  p {
+    margin: 4px 0;
+    text-align: justify;
+  }
+
+  strong { font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0;
+    font-size: 8pt;
+  }
+  th {
+    background: #162251;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: left;
+    padding: 4px 6px;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  td {
+    padding: 3px 6px;
+    border-bottom: 1px solid #e8edf5;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background: #f7f9fc;
+  }
+
+  .snapshot-table td:first-child {
+    width: 18%;
+    font-weight: 600;
+  }
+  .snapshot-table td:nth-child(2) { width: 35%; }
+  .snapshot-table td:nth-child(3) { width: 47%; }
+
+  .matrix-table td:first-child { width: 8%; text-align: center; }
+  .matrix-table td:nth-child(2) { width: 22%; }
+  .matrix-table td:nth-child(3) { width: 25%; }
+  .matrix-table td:nth-child(4) { width: 30%; }
+  .matrix-table td:nth-child(5) { width: 15%; }
+
+  .vom-table td:first-child {
+    font-weight: 600;
+    width: 18%;
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 7.5pt;
+    color: #6b7c93;
+    margin-top: 12px;
+    padding-top: 6px;
+    border-top: 1px solid #e8edf5;
+    font-style: italic;
+  }
+
+  /* Web-only styling (hidden in PDF) */
+  @media screen {
+    body {
+      max-width: 850px;
+      margin: 20px auto;
+      padding: 30px 40px;
+      background: #f0f4f8;
+    }
+    .page-wrap {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(22, 34, 81, 0.1);
+    }
+    body { font-size: 10pt; }
+    table { font-size: 9pt; }
+    th { font-size: 8pt; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="header">
+    <h1>KLAV-INTEL</h1>
+    <div class="subtitle">Klaviyo Competitive Intelligence | Mailchimp R&A | Confidential | Week of {{ report_date }}</div>
+  </div>
+
+  {{ content }}
+
+  <div class="footer">
+    KLAV-INTEL v2.0 | {{ report_date }} | Generated {{ generated_at }}
+  </div>
+</div>
+</body>
+</html>

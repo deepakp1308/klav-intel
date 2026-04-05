@@ -1,0 +1,96 @@
+name: KLAV-INTEL Weekly Report
+
+on:
+  schedule:
+    # Monday midnight ET = 5:00 AM UTC
+    - cron: '0 5 * * 1'
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+  pages: write
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_USER_ID: ${{ secrets.SLACK_USER_ID }}
+  GITHUB_PAGES_URL: https://deepakp1308.github.io/klav-intel/
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check run count (auto-disable after 4 runs)
+        id: check_count
+        run: |
+          COUNT=$(git log --oneline --grep="KLAV-INTEL: Week of" | wc -l)
+          echo "run_count=$COUNT" >> $GITHUB_OUTPUT
+          if [ "$COUNT" -ge 4 ]; then
+            echo "::warning::4 reports generated — auto-disabling workflow"
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install system deps (WeasyPrint)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Generate report
+        run: python main.py --run --no-deploy
+
+      - name: Deploy to GitHub Pages
+        run: |
+          python -c "
+          from reports.html_generator import generate_html
+          from delivery.github_pages import deploy_to_pages
+          from datetime import datetime
+          import glob, os
+
+          date_slug = datetime.now().strftime('%Y-%m-%d')
+          md_files = glob.glob(f'reports/output/{date_slug}/*.md')
+          if md_files:
+              with open(md_files[0]) as f:
+                  md = f.read()
+              html = generate_html(md)
+              deploy_to_pages(html, datetime.now().strftime('%B %d, %Y'))
+          "
+
+      - name: Commit and push docs
+        run: |
+          git config user.name "klav-intel-bot"
+          git config user.email "klav-intel@users.noreply.github.com"
+          git add docs/
+          git commit -m "KLAV-INTEL: Week of $(date +'%B %d, %Y')" || echo "No changes"
+          git push
+
+      - name: Send Slack DM
+        run: |
+          python -c "
+          from delivery.slack_notify import send_slack_dm
+          from datetime import datetime
+          import glob
+
+          date_slug = datetime.now().strftime('%Y-%m-%d')
+          md_files = glob.glob(f'reports/output/{date_slug}/*.md')
+          pdf_files = glob.glob(f'reports/output/{date_slug}/*.pdf')
+          if md_files:
+              with open(md_files[0]) as f:
+                  md = f.read()
+              pdf = pdf_files[0] if pdf_files else None
+              send_slack_dm(md, datetime.now().strftime('%B %d, %Y'), pdf)
+          "
